@@ -1,0 +1,51 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+@news-line-height: 30px;
+
+.news-line {
+  height: @news-line-height;
+  background-color: @app-background-color;
+  .site-name {
+    height: 100%;
+    width: 120px;
+    border-right: solid 2px @background-color-selected;
+    border-left: solid 2px @background-color-selected;
+    text-align: center;
+    line-height: @news-line-height;
+    float: left;
+    span {
+      vertical-align: middle;
+      margin: 0 5px;
+    }
+  }
+
+  .news-container {
+    height: 100%;
+    line-height: @news-line-height;
+    span.news-body {
+      margin-left: 10px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
+
+  .news-in {
+    -webkit-animation: news-in 1s ease;
+  }
+  .news-out {
+    -webkit-animation: news-out 1s ease;
+  }
+}
+
+@-webkit-keyframes news-in {
+  0% { margin-top: -50px; }
+  100% { margin-top: 0px; }
+}
+
+@-webkit-keyframes news-out {
+  0% { margin-top: 0px; }
+  100% { margin-top: 50px; }
+}
