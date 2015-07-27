@@ -4,29 +4,36 @@ HackerNews = require './hacker-news'
 
 module.exports =
 class NewsLineView extends View
+  news: []
+  newsInterval: null
 
   initialize: ->
     @hackerNews = new HackerNews(10)
     @panel = atom.workspace.addTopPanel item: this
-    setTimeout =>
-      @hackerNews.getTopStories @startNewsLine
-    , 1000
 
-  startNewsLine: (data, len) =>
+    @hackerNews.getTopStories (data, len) =>
+      @startNewsLine(data, len)
+
+  startNewsLine: (data, len) ->
     @news = data.top
     @currentNewsIndex = 0
     @newsLength = len
 
     @showNews "<a href='#{@news[@currentNewsIndex]?.url}'>#{@news[@currentNewsIndex].title}</a>"
 
-    setInterval =>
+    @newsInterval = setInterval =>
       if @currentNewsIndex < @newsLength - 1
         @currentNewsIndex += 1
       else
         @currentNewsIndex = 0
 
       @showNews "<a href='#{@news[@currentNewsIndex]?.url}'>#{@news[@currentNewsIndex].title}</a>"
-    , 10000
+    , atom.config.get 'news-line.newsInterval'
+
+  updateNews: ->
+    clearInterval @newsInterval
+    @hackerNews.getTopStories (data, len) =>
+      @startNewsLine(data, len)
 
   @content: ->
     @div class: 'news-line', =>

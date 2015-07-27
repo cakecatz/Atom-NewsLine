@@ -5,9 +5,18 @@ module.exports = NewsLine =
   newsLineView: null
   subscriptions: null
 
+  config:
+    newsInterval:
+      type: 'integer'
+      default: 10000
+
   activate: (state) ->
     @newsLineView = new NewsLineView(state.newsLineViewState)
     @subscriptions = new CompositeDisposable
+
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'news-line:update-news': =>
+        @newsLineView.updateNews()
 
   deactivate: ->
     @subscriptions.dispose()

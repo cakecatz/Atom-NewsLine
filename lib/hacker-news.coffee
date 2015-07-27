@@ -28,7 +28,7 @@ class HackerNews
         @fetchDetailFromIds 'new', data, cb, @newsNumber
 
   fetchDetailFromIds: (type, ids, callback, num=5) ->
-    @news[type] = {} unless @news[type]
+    @news[type] = [] unless @news[type]
     counter = num
     for index in [0...num]
       @news[type][index] = ids[index]
