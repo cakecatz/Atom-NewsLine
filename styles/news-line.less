@@ -8,6 +8,7 @@
 .news-line {
   height: @news-line-height;
   background-color: @app-background-color;
+
   .site-name {
     height: 100%;
     width: 120px;
@@ -16,6 +17,15 @@
     text-align: center;
     line-height: @news-line-height;
     float: left;
+    cursor: pointer;
+
+    &:hover {
+      background-color: @app-background-color + 20%;
+    }
+    &:active {
+      background-color: @app-background-color;
+    }
+
     span {
       vertical-align: middle;
       margin: 0 5px;
@@ -26,6 +36,7 @@
     height: 100%;
     line-height: @news-line-height;
     overflow: hidden;
+
     span.news-body {
       margin-left: 10px;
       vertical-align: middle;
@@ -38,6 +49,33 @@
   }
   .news-out {
     -webkit-animation: news-out 1s ease;
+  }
+
+  .site-list {
+    position: absolute;
+    top: 32px;
+    z-index: 9999;
+    visibility: hidden;
+
+    &.show {
+      visibility: visible;
+    }
+
+    .site-name {
+      width: 120px;
+      height: 100%;
+      float: none;
+      background-color: @app-background-color;
+      border: none;
+      margin-left: 2px;
+
+      &:hover {
+        background-color: @app-background-color + 20%;
+      }
+      &:active {
+        background-color: @app-background-color;
+      }
+    }
   }
 }
 

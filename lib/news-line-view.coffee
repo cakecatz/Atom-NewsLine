@@ -37,9 +37,16 @@ class NewsLineView extends View
 
   @content: ->
     @div class: 'news-line', =>
-      @div class: 'site-name', =>
+      @div class: 'site-name', click: 'toggleSiteList', =>
         @span 'Hacker News'
-      @div class: 'news-container', outlet: "newsBody"
+      @div class: 'site-list', outlet: 'siteList', =>
+        @div class: 'site-name', =>
+          @span 'aaaaaaaaaaaa'
+        @div class: 'site-name', =>
+          @span 'bBbbbbbb'
+        @div class: 'site-name', =>
+          @span 'cccccccc'
+      @div class: 'news-container', outlet: 'newsBody'
 
   showNews: (news) ->
     if $('span.news-body')?
@@ -48,6 +55,9 @@ class NewsLineView extends View
         $('span.news-body.news-out').remove()
         @newsBody.append "<span class='news-body news-in'>#{news}</span>"
       , 1000
+
+  toggleSiteList: ->
+    @siteList.toggleClass 'show'
 
   serialize: ->
 
