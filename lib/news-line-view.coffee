@@ -5,14 +5,35 @@ HackerNews = require './hacker-news'
 module.exports =
 class NewsLineView extends View
   news: []
+  newsSites: []
   newsInterval: null
 
   initialize: ->
-    @hackerNews = new HackerNews(10)
+    hackerNews = new HackerNews(atom.config.get('news-line.newsNumber'))
     @panel = atom.workspace.addTopPanel item: this
 
-    @hackerNews.getTopStories (data, len) =>
-      @startNewsLine(data, len)
+    @registerSite hackerNews
+
+    @refresh()
+
+    @start()
+
+  loadSiteList: (sites) ->
+
+  refresh: ->
+    #TODO: need diff
+    @siteList.empty()
+    elem = ''
+    for site in @newsSites
+      @selectedSite.append "<span>#{site.name}</span>"
+      elem += "<div class='site-name'><span>#{site.name}</span></div>"
+
+    @siteList.append elem
+
+    @newsSites[0].subscribe this
+
+  registerSite: (site) ->
+    @newsSites.push site
 
   startNewsLine: (data, len) ->
     @news = data.top
@@ -31,33 +52,35 @@ class NewsLineView extends View
     , atom.config.get 'news-line.newsInterval'
 
   updateNews: ->
-    clearInterval @newsInterval
-    @hackerNews.getTopStories (data, len) =>
-      @startNewsLine(data, len)
+    @newsSites[0].update()
 
   @content: ->
     @div class: 'news-line', =>
-      @div class: 'site-name', click: 'toggleSiteList', =>
-        @span 'Hacker News'
+      @div class: 'site-name', click: 'toggleSiteList', outlet: 'selectedSite'
       @div class: 'site-list', outlet: 'siteList', =>
         @div class: 'site-name', =>
-          @span 'aaaaaaaaaaaa'
+          @span 'Echo JS'
         @div class: 'site-name', =>
-          @span 'bBbbbbbb'
+          @span 'Front-end Front'
         @div class: 'site-name', =>
-          @span 'cccccccc'
+          @span 'GitHub Trending'
       @div class: 'news-container', outlet: 'newsBody'
 
   showNews: (news) ->
+    newsElem = "<a href='#{news?.url}'>#{news.title}</a>"
+
     if $('span.news-body')?
       $('span.news-body').addClass 'news-out'
       setTimeout =>
         $('span.news-body.news-out').remove()
-        @newsBody.append "<span class='news-body news-in'>#{news}</span>"
+        @newsBody.append "<span class='news-body news-in'>#{newsElem}</span>"
       , 1000
 
   toggleSiteList: ->
     @siteList.toggleClass 'show'
+
+  start: ->
+
 
   serialize: ->
 

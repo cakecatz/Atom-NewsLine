@@ -4,26 +4,26 @@
 // for a full listing of what's available.
 @import "ui-variables";
 @news-line-height: 30px;
+@site-title-background-color: @app-background-color;
 
 .news-line {
   height: @news-line-height;
-  background-color: @app-background-color;
+  background-color: @panel-heading-border-color;
 
   .site-name {
     height: 100%;
     width: 120px;
-    border-right: solid 2px @background-color-selected;
-    border-left: solid 2px @background-color-selected;
     text-align: center;
     line-height: @news-line-height;
     float: left;
     cursor: pointer;
+    background-color: @site-title-background-color;
 
     &:hover {
-      background-color: @app-background-color + 20%;
+      background-color: @site-title-background-color + 20%;
     }
     &:active {
-      background-color: @app-background-color;
+      background-color: @site-title-background-color;
     }
 
     span {
@@ -65,15 +65,15 @@
       width: 120px;
       height: 100%;
       float: none;
-      background-color: @app-background-color;
+      background-color: @site-title-background-color;
       border: none;
       margin-left: 2px;
 
       &:hover {
-        background-color: @app-background-color + 20%;
+        background-color: @site-title-background-color + 20%;
       }
       &:active {
-        background-color: @app-background-color;
+        background-color: @site-title-background-color;
       }
     }
   }

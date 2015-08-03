@@ -9,6 +9,9 @@ module.exports = NewsLine =
     newsInterval:
       type: 'integer'
       default: 10000
+    newsNumber:
+      type: 'integer'
+      default: 10
 
   activate: (state) ->
     @newsLineView = new NewsLineView(state.newsLineViewState)
