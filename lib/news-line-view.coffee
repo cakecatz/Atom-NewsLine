@@ -66,11 +66,11 @@ class NewsLineView extends View
       @div class: 'site-list', outlet: 'siteListElement'
       @div class: 'news-container', outlet: 'newsBody'
 
-  showNews: (news) ->
+  pushNews: (news) ->
     newsElem = "<a href='#{news?.url}'>#{news.title}</a>"
     if $('span.news-body')?
       $('span.news-body').addClass 'news-out'
-      setTimeout =>
+      @pushStack = setTimeout =>
         $('span.news-body.news-out').remove()
         @newsBody.append "<span class='news-body news-in'>#{newsElem}</span>"
       , 1000

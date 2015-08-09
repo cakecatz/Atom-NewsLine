@@ -49,11 +49,13 @@ class HackerNews
 
   subscribe: (@newsLine) ->
     @getTopStories =>
-      @newsLine.showNews @newsList[@newsIndex]
+      @newsLine.pushNews @newsList[@newsIndex]
       @newsIndex += 1
 
+      clearInterval @process if @process?
+
       @process = setInterval =>
-        @newsLine.showNews @newsList[@newsIndex]
+        @newsLine.pushNews @newsList[@newsIndex]
         if @newsIndex < @newsNumber - 1
           @newsIndex += 1
         else
