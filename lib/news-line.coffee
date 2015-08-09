@@ -27,3 +27,6 @@ module.exports = NewsLine =
 
   serialize: ->
     newsLineViewState: @newsLineView.serialize()
+
+  provideNewsLine: ->
+    @newsLineView

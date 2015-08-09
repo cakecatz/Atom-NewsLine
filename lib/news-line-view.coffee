@@ -1,74 +1,73 @@
 {CompositeDisposable} = require 'atom'
 {View, $} = require 'space-pen'
 HackerNews = require './hacker-news'
+EchoJS     = require './echo-js'
 
 module.exports =
 class NewsLineView extends View
   news: []
   newsSites: []
   newsInterval: null
+  currentActiveSite: null
 
   initialize: ->
     hackerNews = new HackerNews(atom.config.get('news-line.newsNumber'))
+    echoJS     = new EchoJS()
+
     @panel = atom.workspace.addTopPanel item: this
+    @subscriptions = new CompositeDisposable
+
+    @newsInterval = atom.config.get 'news-line.newsInterval'
 
     @registerSite hackerNews
+    @registerSite echoJS
 
-    @refresh()
+    @currentActiveSite = @newsSites[0]
 
     @start()
 
-  loadSiteList: (sites) ->
+    ## commands
+    @subscriptions.add atom.commands.add 'atom-workspace', 'news-line:update-news', =>
+      @newsSites[0].update()
 
-  refresh: ->
-    #TODO: need diff
-    @siteList.empty()
+  start: ->
+    # #TODO:0 need diff
+    @siteListElement.empty()
     elem = ''
     for site in @newsSites
-      @selectedSite.append "<span>#{site.name}</span>"
-      elem += "<div class='site-name'><span>#{site.name}</span></div>"
+      if site.__id is @currentActiveSite.__id
+        @selectedSite.empty()
+        @selectedSite.append "<span>#{site.name}</span>"
+        continue
+      elem += "<div class='site-name' data-id='#{site.__id}' ><span>#{site.name}</span></div>"
+    @siteListElement.append elem
 
-    @siteList.append elem
-
-    @newsSites[0].subscribe this
+    $('.site-list .site-name').on 'click', @willChangeActiveSite
+    @currentActiveSite.subscribe this
 
   registerSite: (site) ->
+    site.__id = @getId()
     @newsSites.push site
 
-  startNewsLine: (data, len) ->
-    @news = data.top
-    @currentNewsIndex = 0
-    @newsLength = len
-
-    @showNews "<a href='#{@news[@currentNewsIndex]?.url}'>#{@news[@currentNewsIndex].title}</a>"
-
-    @newsInterval = setInterval =>
-      if @currentNewsIndex < @newsLength - 1
-        @currentNewsIndex += 1
-      else
-        @currentNewsIndex = 0
-
-      @showNews "<a href='#{@news[@currentNewsIndex]?.url}'>#{@news[@currentNewsIndex].title}</a>"
-    , atom.config.get 'news-line.newsInterval'
-
   updateNews: ->
-    @newsSites[0].update()
+    @currentActiveSite.update()
+
+  willChangeActiveSite: (e) =>
+    @toggleSiteList()
+    if e.currentTarget.dataset.id isnt @currentActiveSite.__id
+      $('.site-list .site-name').off 'click'
+      @currentActiveSite?.unsubscribe()
+      @currentActiveSite = @getSiteById e.currentTarget.dataset.id
+      @start()
 
   @content: ->
     @div class: 'news-line', =>
       @div class: 'site-name', click: 'toggleSiteList', outlet: 'selectedSite'
-      @div class: 'site-list', outlet: 'siteList', =>
-        @div class: 'site-name', =>
-          @span 'Echo JS'
-        @div class: 'site-name', =>
-          @span 'Front-end Front'
-        @div class: 'site-name', =>
-          @span 'GitHub Trending'
+      @div class: 'site-list', outlet: 'siteListElement'
       @div class: 'news-container', outlet: 'newsBody'
 
   showNews: (news) ->
     newsElem = "<a href='#{news?.url}'>#{news.title}</a>"
-
     if $('span.news-body')?
       $('span.news-body').addClass 'news-out'
       setTimeout =>
@@ -77,10 +76,22 @@ class NewsLineView extends View
       , 1000
 
   toggleSiteList: ->
-    @siteList.toggleClass 'show'
+    @siteListElement.toggleClass 'show'
 
-  start: ->
+  getSiteById: (id) ->
+    for site in @newsSites
+      if site.__id is parseInt(id)
+        return site
 
+    return null
+
+  getId: ->
+    if @_id?
+      @_id += 1
+    else
+      @_id = 1
+
+    return @_id
 
   serialize: ->
 

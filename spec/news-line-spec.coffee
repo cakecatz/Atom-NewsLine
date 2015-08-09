@@ -1,3 +1,5 @@
+# TODO: add specs
+
 NewsLine = require '../lib/news-line'
 
 # Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.

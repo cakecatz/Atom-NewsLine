@@ -7,7 +7,7 @@ class HackerNews
   API_VERSION: 'v0'
   API_URL: null
   newsNumber: 0
-  interval: 5000
+  interval: 10000
   newsIndex: 0
   name: 'Hacker News'
   newsList: []
@@ -32,6 +32,9 @@ class HackerNews
         @fetchDetailFromIds 'new', ids, callback, @newsNumber
 
   fetchDetailFromIds: (type, ids, callback, num=5) ->
+    @newsRank = {}
+    @newsList = []
+
     @counter = num
     for index in [0...num]
       newsId = ids[index]
@@ -40,12 +43,9 @@ class HackerNews
         .then (res) ->
           res.json()
         .then (data) =>
-          @storeNews(index, data)
+          @newsList.push data
           @counter -= 1
           @doneFetch(callback) if @counter is 0
-
-  storeNews: (rank, data) ->
-    @newsList.push data
 
   subscribe: (@newsLine) ->
     @getTopStories =>
@@ -58,7 +58,11 @@ class HackerNews
           @newsIndex += 1
         else
           @newsIndex = 0
-      , @interval
+      , @newsLine.newsInterval
+
+  unsubscribe: ->
+    clearInterval @process if @process?
+    @newsIndex = 0
 
   doneFetch: (callback) ->
     @newsList.sort (a, b) =>
@@ -69,5 +73,7 @@ class HackerNews
     callback()
 
   update: ->
-    
+    @getTopStories =>
+      @newsIndex = 0
+
 

@@ -12,5 +12,13 @@
   "dependencies": {
     "node-fetch": "^1.3.2",
     "space-pen": "^5.1.1"
+  },
+  "providedServices": {
+    "news-line" : {
+      "description": "Show your favorite news in Atom",
+      "versions": {
+        "0.0.1": "provideNewsLine"
+      }
+    }
   }
 }
