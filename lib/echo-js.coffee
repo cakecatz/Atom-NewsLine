@@ -8,30 +8,29 @@ class EchoJS extends NewsLineSiteBase
   items: []
   process: null
 
-  constructor: ->
+  constructor: (@interval, @newsNumber)->
     @itemIndex = 0
 
   subscribe: (@newsLine) ->
     @itemIndex = 0
-    @fetchNews (@items) =>
+    @fetchNews =>
       @process = setInterval =>
         item = @items[@itemIndex]
         @newsLine.pushNews
           title: item.title
           url: item.link
-        console.log @itemIndex, @items.length
 
-        if @itemIndex >= @items.length - 1
-          @itemIndex = 0
-        else
-          @itemIndex += 1
+        @itemIndex += 1
 
-      , 4000
+        @itemIndex = 0 if ( @itemIndex >= @items.length ) or ( @itemIndex >= @newsNumber )
+
+      , @interval
 
   fetchNews: (callback) ->
     rssParser(@url)
-      .then (items) ->
-        callback(items)
+      .then (items) =>
+        @items = items
+        callback()
       .catch (err) ->
         console.log err
 
@@ -39,4 +38,5 @@ class EchoJS extends NewsLineSiteBase
     clearInterval @process
 
   update: ->
-    console.log 'update'
+    @fetchNews =>
+      @itemIndex = 0

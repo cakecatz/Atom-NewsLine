@@ -7,14 +7,12 @@ class HackerNews
   API_VERSION: 'v0'
   API_URL: null
   newsNumber: 0
-  interval: 10000
   newsIndex: 0
   name: 'Hacker News'
   newsList: []
   newsRank: {}
 
-  constructor: (num) ->
-    @newsNumber = num
+  constructor: (@interval, @newsNumber) ->
     @API_URL = "#{@API_BASE_URL}#{@API_VERSION}"
 
   getTopStories: (callback) ->

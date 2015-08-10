@@ -11,27 +11,28 @@ class NewsLineView extends View
   currentActiveSite: null
 
   initialize: ->
-    hackerNews = new HackerNews(atom.config.get('news-line.newsNumber'))
-    echoJS     = new EchoJS()
+    @newsInterval = atom.config.get 'news-line.newsInterval'
+    @newsNumber = atom.config.get 'news-line.newsNumber'
+
+    hackerNews = new HackerNews(@newsInterval, @newsNumber)
+    echoJS     = new EchoJS(@newsInterval, @newsNumber)
 
     @panel = atom.workspace.addTopPanel item: this
     @subscriptions = new CompositeDisposable
-
-    @newsInterval = atom.config.get 'news-line.newsInterval'
 
     @registerSite hackerNews
     @registerSite echoJS
 
     @currentActiveSite = @newsSites[0]
 
-    @start()
+    setTimeout @start, 1000
 
     ## commands
     @subscriptions.add atom.commands.add 'atom-workspace', 'news-line:update-news', =>
       @newsSites[0].update()
 
-  start: ->
-    # #TODO:0 need diff
+  start: =>
+    # TODO: need diff
     @siteListElement.empty()
     elem = ''
     for site in @newsSites
@@ -70,7 +71,7 @@ class NewsLineView extends View
     newsElem = "<a href='#{news?.url}'>#{news.title}</a>"
     if $('span.news-body')?
       $('span.news-body').addClass 'news-out'
-      @pushStack = setTimeout =>
+      setTimeout =>
         $('span.news-body.news-out').remove()
         @newsBody.append "<span class='news-body news-in'>#{newsElem}</span>"
       , 1000
