@@ -2,7 +2,7 @@
   "name": "news-line",
   "main": "./lib/news-line",
   "version": "0.2.0",
-  "description": "Read new in Atom",
+  "description": "Reads new in Atom",
   "keywords": [
     "news"
   ],
